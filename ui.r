@@ -1,36 +1,43 @@
 library(shiny)
 
-# Define UI for random distribution application 
+# Define UI for Statistical Performance Analysis (spa)
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Tabsets"),
-  
-  # Sidebar with controls to select the random distribution type
-  # and number of observations to generate. Note the use of the
-  # br() element to introduce extra vertical spacing
+  titlePanel("Statistical Performance Analysis"),
+
   sidebarLayout(
     sidebarPanel(
-      radioButtons("dist", "Distribution type:",
-                   c("Normal" = "norm",
-                     "Uniform" = "unif",
-                     "Log-normal" = "lnorm",
-                     "Exponential" = "exp")),
-      br(),
+      selectInput("cc", "Choose a Control Chart:", 
+                  choices = c("X-bar Chart")),
+
+      radioButtons("k", "Case:",
+                   c("Known-Known" = "kk",
+                     "Known-Unknown" = "ku",
+                     "Unknown-Known" = "uk",
+                     "Unknown-Unknown" = "uu")),
       
-      sliderInput("n", 
-                  "Number of observations:", 
-                  value = 500,
+      selectInput("est", "Estimator:", 
+                  choices = c("s-pooled", "s", "Range")),
+      
+      numericInput("sub", "Number of Subgroups (m):", 10),
+      
+      numericInput("obs", "Subgroup Size (n):", 20),
+      
+      sliderInput("l", 
+                  "L:", 
+                  value = 3,
                   min = 1, 
-                  max = 1000)
+                  max = 6),
+      
+      numericInput("delta", "Shift:", 10)
     ),
     
-    # Show a tabset that includes a plot, summary, and table view
-    # of the generated distribution
+
     mainPanel(
       tabsetPanel(type = "tabs", 
-                  tabPanel("Plot", plotOutput("plot")), 
-                  tabPanel("Summary", verbatimTextOutput("summary")), 
+                  tabPanel("Performance", plotOutput("plot")), 
+                  tabPanel("PDF-CDF", verbatimTextOutput("summary")), 
                   tabPanel("Table", tableOutput("table"))
       )
     )
