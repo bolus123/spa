@@ -3,6 +3,4 @@ arl0 <- function (L) {
   return(a)
 }
 
-
-# Felipe!!!!!
-# Rong is awesome too!!!!
+#testing
