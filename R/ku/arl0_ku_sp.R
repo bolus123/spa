@@ -7,4 +7,4 @@ ARL0 <- function (L,m,n) {
   return (a)
 }
 
-### Good work Felipe!!!! Bahahahaha
+### 
