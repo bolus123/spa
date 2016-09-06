@@ -27,8 +27,8 @@ shinyUI(fluidPage(
       sliderInput("l", 
                   "L:", 
                   value = 3,
-                  min = 1, 
-                  max = 6),
+                  min = 2, 
+                  max = 4),
       
       numericInput("delta", "Shift:", 10)
     ),
