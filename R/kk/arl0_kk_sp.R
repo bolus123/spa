@@ -4,9 +4,4 @@ arl0 <- function (L) {
 }
 
 
-<<<<<<< HEAD
-=======
-# Felipe!!!!!
-# Rong is awesome too!!!!]
-# fe fe!
->>>>>>> c0f0642e1ae05dcebddc38ac10ac161806071c84
+
