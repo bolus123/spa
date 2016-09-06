@@ -6,3 +6,5 @@ ARL0 <- function (L,m,n) {
   a <- integrate(CARL,0,1)$va
   return (a)
 }
+
+### Good work Felipe!!!! Bahahahaha
