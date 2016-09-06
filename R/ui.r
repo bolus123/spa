@@ -8,10 +8,10 @@ shinyUI(fluidPage(
 
   sidebarLayout(
     sidebarPanel(
-      selectInput("cc", "Choose a Control Chart:", 
+      selectInput("cc", "Control Chart:", 
                   choices = c("X-bar Chart")),
 
-      radioButtons("k", "Case:",
+      radioButtons("case", "Case:",
                    c("Known-Known" = "kk",
                      "Known-Unknown" = "ku",
                      "Unknown-Known" = "uk",
@@ -37,8 +37,7 @@ shinyUI(fluidPage(
     mainPanel(
       tabsetPanel(type = "tabs", 
                   tabPanel("Performance", plotOutput("plot")), 
-                  tabPanel("PDF-CDF", verbatimTextOutput("summary")), 
-                  tabPanel("Table", tableOutput("table"))
+                  tabPanel("PDF-CDF", verbatimTextOutput("summary"))
       )
     )
   )
