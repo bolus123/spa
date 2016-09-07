@@ -3,6 +3,8 @@
 library(cubature)
 library(numDeriv)
 
+All
+
 ARL0 <- function (L,m,n) {
   CARL <- function (U) {
     a <- 1/(1 - pnorm(((1/sqrt(m))*qnorm(U[1],0,1))+(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1) + pnorm(((1/sqrt(m))*qnorm(U[1],0,1))-(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1))
