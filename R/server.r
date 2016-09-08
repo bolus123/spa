@@ -4,44 +4,45 @@ shinyServer(function(input, output) {
 
   arl0 <- reactive({
     L <- as.numeric(input$l)
-    1/(2-(2*pnorm(L)))
+    1/(2 - (2 * pnorm(L)))
   })
   
   cdfrl0 <- reactive({
     L <- as.numeric(input$l)
     t <- as.numeric(arl0())
-    pgeom(t,2-(2*pnorm(L)))
+    pgeom(t, 2 - (2 * pnorm(L)))
   })
   
   pdfrl0 <- reactive({
     L <- as.numeric(input$l)
     t <- as.integer(arl0())
-    dgeom(t,2-(2*pnorm(L)))
+    # t <- 370
+    dgeom(t, 2 - (2 * pnorm(L)))
   })
 
   q5 <- reactive({
     L <- as.numeric(input$l)
-    qgeom(0.05, 2-(2*pnorm(L)))
+    qgeom(0.05, 2 - (2 * pnorm(L)))
   })
   
   q25 <- reactive({
     L <- as.numeric(input$l)
-    qgeom(0.25, 2-(2*pnorm(L)))
+    qgeom(0.25, 2 - (2 * pnorm(L)))
   })
   
   q50 <- reactive({
     L <- as.numeric(input$l)
-    qgeom(0.50, 2-(2*pnorm(L)))
+    qgeom(0.50, 2 - (2 * pnorm(L)))
   })
   
   q75 <- reactive({
     L <- as.numeric(input$l)
-    qgeom(0.75, 2-(2*pnorm(L)))
+    qgeom(0.75, 2 - (2 * pnorm(L)))
   })
   
   q95 <- reactive({
     L <- as.numeric(input$l)
-    qgeom(0.95, 2-(2*pnorm(L)))
+    qgeom(0.95, 2 - (2 * pnorm(L)))
   })
   
   tbq <- reactive({
@@ -69,15 +70,25 @@ shinyServer(function(input, output) {
     tbq()
   })
   
-  output$plot <- renderPlot({
+  output$cdf <- renderPlot({
     L <- as.numeric(input$l)
     cdfrlc <- Vectorize(cdfrl0())
-    x <- as.integer(seq(1, 2000, 1))
-    cdf <- curve(cdfrlc(x, L), 1, 2000 , n = 2000, ylim=c(0,1),
-              xlab="t", ylab="", cex.axis=1.5, type="l",
-              lty=1, lwd=3, yaxs="i", xaxs="i", 
-              main=paste("P(In-Control RL <= t)","for", "L=",L ))
+    # x <- as.integer(seq(1, 2000, 1))
+    cdf <- curve(cdfrlc(x, L), 1, 2000, ylim = c(0,1),
+              xlab = "t", ylab = "", cex.axis = 1.5, type = "l",
+              lty = 1, lwd = 3, yaxs="i", xaxs="i", 
+              main = paste("P(In-Control RL <= t)","for", "L =", L))
     cdf
+  })
+  
+  output$pdf <- renderPlot({
+    L <- as.numeric(input$l)
+    pdfrlc <- Vectorize(pdfrl0())
+    # x <- as.integer(seq(1, 2000, 1))
+    pdf <- curve(pdfrlc(x, L), 1, 2000, n = 2000, xlab = "t", ylab = "",
+                 cex.axis = 1.5, type = "l", lty = 1, lwd = 3, yaxs = "i", 
+                 xaxs = "i",main = paste("PDF of the In-Control RL","for", "L =", L))
+    pdf
   })
   
 })
