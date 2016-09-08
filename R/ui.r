@@ -36,8 +36,8 @@ shinyUI(fluidPage(
 
     mainPanel(
       tabsetPanel(type = "tabs", 
-                  tabPanel("Performance", tableOutput("sum")), 
-                  tabPanel("PDF-CDF", verbatimTextOutput("summary"))
+                  tabPanel("Performance", tableOutput("psum"), tableOutput("qsum")), 
+                  tabPanel("PDF-CDF", plotOutput("plot"))
       )
     )
   )

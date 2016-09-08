@@ -7,31 +7,77 @@ shinyServer(function(input, output) {
     1/(2-(2*pnorm(L)))
   })
   
-  q10 <- reactive({
-    L <- as.numeric(input$l)
-    qgeom(0.1, 2-(2*pnorm(L)))
-  })
-  
   cdfrl0 <- reactive({
     L <- as.numeric(input$l)
-    t <- 370
+    t <- as.numeric(arl0())
     pgeom(t,2-(2*pnorm(L)))
   })
   
-  tb <- reactive({
+  pdfrl0 <- reactive({
+    L <- as.numeric(input$l)
+    t <- as.integer(arl0())
+    dgeom(t,2-(2*pnorm(L)))
+  })
+
+  q5 <- reactive({
+    L <- as.numeric(input$l)
+    qgeom(0.05, 2-(2*pnorm(L)))
+  })
+  
+  q25 <- reactive({
+    L <- as.numeric(input$l)
+    qgeom(0.25, 2-(2*pnorm(L)))
+  })
+  
+  q50 <- reactive({
+    L <- as.numeric(input$l)
+    qgeom(0.50, 2-(2*pnorm(L)))
+  })
+  
+  q75 <- reactive({
+    L <- as.numeric(input$l)
+    qgeom(0.75, 2-(2*pnorm(L)))
+  })
+  
+  q95 <- reactive({
+    L <- as.numeric(input$l)
+    qgeom(0.95, 2-(2*pnorm(L)))
+  })
+  
+  tbq <- reactive({
     data.frame(
-      Metric = c("ARL0", "Percentile: 10%", "CDFRL0"),
-      Value = as.numeric(c(arl0(), q10(), cdfrl0())),
+      Percentile = c("5%", "25%", "50%", "75%", "95%"),
+      Value = as.numeric(c(q5(), q25(), q50(), q75(), q95())),
       stringsAsFactors = FALSE
     )
   })
   
-  output$sum <- renderTable({
+  tb <- reactive({
+    data.frame(
+      Metric = c("ARL0", "CDFRL0", "PDFRL0"),
+      Value = as.numeric(c(arl0(), cdfrl0(), pdfrl0())),
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  
+  output$psum <- renderTable({
     tb()
   })
   
+  output$qsum <- renderTable({
+    tbq()
+  })
+  
   output$plot <- renderPlot({
-
+    L <- as.numeric(input$l)
+    cdfrlc <- Vectorize(cdfrl0())
+    x <- as.integer(seq(1, 2000, 1))
+    cdf <- curve(cdfrlc(x, L), 1, 2000 , n = 2000, ylim=c(0,1),
+              xlab="t", ylab="", cex.axis=1.5, type="l",
+              lty=1, lwd=3, yaxs="i", xaxs="i", 
+              main=paste("P(In-Control RL <= t)","for", "L=",L ))
+    cdf
   })
   
 })
