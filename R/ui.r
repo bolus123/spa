@@ -1,8 +1,9 @@
 library(shiny)
+library(shinythemes)
 
 # Define UI for Statistical Performance Analysis (spa)
 shinyUI(fluidPage(
-  
+  theme = shinytheme("flatly"),
   # Application title
   titlePanel("Statistical Performance Analysis"),
 
@@ -36,7 +37,7 @@ shinyUI(fluidPage(
 
     mainPanel(
       tabsetPanel(type = "tabs", 
-                  tabPanel("Performance", plotOutput("plot")), 
+                  tabPanel("Performance", tableOutput("summary")), 
                   tabPanel("PDF-CDF", verbatimTextOutput("summary"))
       )
     )

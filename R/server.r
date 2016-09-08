@@ -31,15 +31,12 @@ shinyServer(function(input, output) {
   })
   
   output$summary <- renderPrint({
-    stop
+    arl0 <- 1/(2-(2*pnorm(L)))
+    arl0
   })
   
   output$plot <- renderPlot({
-    dist <- input$dist
-    n <- input$n
-    
-    hist(data(), 
-         main=paste('r', dist, '(', n, ')', sep=''))
+
   })
   
 
