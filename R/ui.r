@@ -3,7 +3,9 @@ library(shinythemes)
 
 # Define UI for Statistical Performance Analysis (spa)
 shinyUI(fluidPage(
+  # Application theme
   theme = shinytheme("flatly"),
+  
   # Application title
   titlePanel("Statistical Performance Analysis"),
 
@@ -21,15 +23,12 @@ shinyUI(fluidPage(
       selectInput("est", "Estimator:", 
                   choices = c("s-pooled", "s", "Range")),
       
-      numericInput("sub", "Number of Subgroups (m):", 10),
+      numericInput("sub", "Number of Subgroups (m):", 30),
       
-      numericInput("obs", "Subgroup Size (n):", 20),
+      numericInput("obs", "Subgroup Size (n):", 5),
       
-      sliderInput("l", 
-                  "L:", 
-                  value = 3,
-                  min = 2, 
-                  max = 4),
+      sliderInput("l", "L:", 
+                  min = 2, max = 4, value = 3, step = 0.01),
       
       numericInput("delta", "Shift:", 10)
     ),
@@ -37,7 +36,7 @@ shinyUI(fluidPage(
 
     mainPanel(
       tabsetPanel(type = "tabs", 
-                  tabPanel("Performance", tableOutput("summary")), 
+                  tabPanel("Performance", tableOutput("sum")), 
                   tabPanel("PDF-CDF", verbatimTextOutput("summary"))
       )
     )

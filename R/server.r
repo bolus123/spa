@@ -2,44 +2,25 @@ library(shiny)
 
 shinyServer(function(input, output) {
 
-  cc <- reactive({
-    input$cc
+  arl0 <- reactive({
+    L <- as.numeric(input$l)
+    1/(2-(2*pnorm(L)))
   })
   
-  case <- reactive({
-    input$case
+  tb <- reactive({
+    data.frame(
+      Metric = c("ARL0"),
+      Value = as.numeric(c(arl0())),
+      stringsAsFactors = FALSE
+    )
   })
   
-  est <- reactive({
-    input$est
-  })
-  
-  sub <- reactive({
-    input$sub
-  })
-  
-  n <- reactive({
-      input$obs
-  })
-  
-  L <- reactive({
-    input$l
-  })
-  
-  d <- reactive({
-    input$delta
-  })
-  
-  output$summary <- renderPrint({
-    arl0 <- 1/(2-(2*pnorm(L)))
-    arl0
+  output$sum <- renderTable({
+    tb()
   })
   
   output$plot <- renderPlot({
 
   })
-  
-
-  
   
 })
