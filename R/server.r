@@ -9,16 +9,16 @@ shinyServer(function(input, output) {
   
   cdfrl0 <- reactive({
     L <- as.numeric(input$l)
-    t <- as.numeric(arl0())
+    t <- as.integer(arl0())
     pgeom(t, 2 - (2 * pnorm(L)))
   })
   
   pdfrl0 <- reactive({
     L <- as.numeric(input$l)
     t <- as.integer(arl0())
-    # t <- 370
     dgeom(t, 2 - (2 * pnorm(L)))
   })
+  
 
   q5 <- reactive({
     L <- as.numeric(input$l)
@@ -70,11 +70,14 @@ shinyServer(function(input, output) {
     tbq()
   })
   
+  
   output$cdf <- renderPlot({
     L <- as.numeric(input$l)
-    cdfrlc <- Vectorize(cdfrl0())
-    # x <- as.integer(seq(1, 2000, 1))
-    cdf <- curve(cdfrlc(x, L), 1, 2000, ylim = c(0,1),
+    cdfrlc <- function(t, L){
+      cdfrl0 <- pgeom(t, 2 - (2 * pnorm(L)))
+      Vectorize(cdfrl0)
+    }
+    cdf <- curve(cdfrlc(x, L), 1, 2000, n = 2000, ylim = c(0,1),
               xlab = "t", ylab = "", cex.axis = 1.5, type = "l",
               lty = 1, lwd = 3, yaxs="i", xaxs="i", 
               main = paste("P(In-Control RL <= t)","for", "L =", L))
@@ -83,8 +86,10 @@ shinyServer(function(input, output) {
   
   output$pdf <- renderPlot({
     L <- as.numeric(input$l)
-    pdfrlc <- Vectorize(pdfrl0())
-    # x <- as.integer(seq(1, 2000, 1))
+    pdfrlc <- function(t, L){
+      pdfrl0 <- dgeom(t, 2 - (2 * pnorm(L)))
+      Vectorize(pdfrl0)
+    }
     pdf <- curve(pdfrlc(x, L), 1, 2000, n = 2000, xlab = "t", ylab = "",
                  cex.axis = 1.5, type = "l", lty = 1, lwd = 3, yaxs = "i", 
                  xaxs = "i",main = paste("PDF of the In-Control RL","for", "L =", L))
