@@ -7,6 +7,11 @@ shinyServer(function(input, output) {
     1/(2 - (2 * pnorm(L)))
   })
   
+  far0 <- reactive({
+    L <- as.numeric((input$l))
+    2 - (2 * pnorm(L))
+  })
+  
   cdfrl0 <- reactive({
     L <- as.numeric(input$l)
     t <- as.integer(arl0())
@@ -55,21 +60,19 @@ shinyServer(function(input, output) {
   
   tb <- reactive({
     data.frame(
-      Metric = c("ARL0", "CDFRL0", "PDFRL0"),
-      Value = as.numeric(c(arl0(), cdfrl0(), pdfrl0())),
+      Metric = c("ARL0", "FAR", "CDFRL0", "PDFRL0"),
+      Value = as.numeric(c(arl0(), far0(), cdfrl0(), pdfrl0())),
       stringsAsFactors = FALSE
     )
   })
   
-  
   output$psum <- renderTable({
     tb()
-  })
+  }, digits = 5)
   
   output$qsum <- renderTable({
     tbq()
-  })
-  
+  }, digits = 2)
   
   output$cdf <- renderPlot({
     L <- as.numeric(input$l)
