@@ -16,14 +16,15 @@ PDFRL0 <- function (t,L) {
 }
 
 quantileRL0 <-function (p,L) {
-  a <- qgeom(p, 2-(2*pnorm(L))) + 1
-  return(a)
+  a<-log(1-p)/log(1-(2-(2*pnorm(L))))
+  g<-ceiling(a)
+  return(g)
 }
 
 plotCDFRL0 <- function (L) {
   CDFRL02 <- Vectorize(CDFRL0)
   curve(CDFRL02(x,L),1,2000 ,ylim=c(0,1),n=10000,xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n",yaxt="n")
-  title(main=paste("P(In-Control RL <= t)","for", "L=",L ), line=+2.5)
+  title(main=paste("P(IC RL <= t)","for", "L=",L ), line=+2.5)
   xvalues<-c(0,200,400,600,800,1000,1200,1400,1600,1800,2000)
   yvalues<-c(0,0.2,0.4,0.6,0.8,1)
   axis(1,at=xvalues,cex.axis=1.5,las=1)
@@ -38,13 +39,12 @@ plotCDFRL0 <- function (L) {
 
   Median0 <- quantileRL0(0.5,L)
   CDFmedianr <-round(CDFRL0(quantileRL0(0.5,L),L),2)
-  axis(3,Median0,cex.axis=1,las=1)
+  axis(1,Median0,cex.axis=1,las=1, line=1)
   axis(4,CDFmedianr,cex.axis=1,las=1)
   abline(v=Median0 ,lty=5.5,col="red")
   abline(h=CDFRL0(quantileRL0(0.5,L),L),lty=5.5,col="red")
   legend(1250, 0.4, c( paste("MRL0 =", Median0) , paste("ARL0 =", ARL0r)), cex=1, lty=c(5.5,5.5),lwd=c(1,1),col=c("red","blue"))
 }
-
 
 plotPDFRL0 <- function (L) {
   PDF2 <- Vectorize(PDFRL0)
@@ -53,14 +53,17 @@ plotPDFRL0 <- function (L) {
   for (i in 1:length(t)) {
     PDFv[i] <- PDFRL0(t[i],L)
   }
-  plot(t,PDFv,xlab="t",ylab="",cex.axis=1.5,type="h",lty=1,lwd=1,yaxs="i",xaxs="i")
-  title(main=paste("PDF of the In-Control RL","for", "L=",L  ), line=+2.5)
+  plot(t,PDFv,xlab="t",ylab="",cex.axis=1.5,type="h",lty=1,lwd=1,yaxs="i",xaxs="i",xaxt="n")
+  title(main=paste("P(IC RL = t)","for", "L=",L  ), line=+2.5)
+  xvalues<-c(0,200,400,600,800,1000,1200,1400,1600,1800,2000)
+  axis(1,at=xvalues,cex.axis=1.5,las=1)
+  
   ARL0r <- round(ARL0(L),2)
   axis(3,ARL0r,cex.axis=1,las=1)
   abline(v=ARL0(L),lty=5.5,col="blue")
   
   Median0 <- quantileRL0(0.5,L)
-  axis(3,Median0,cex.axis=1,las=1)
+  axis(1,Median0,cex.axis=1,las=1,line=1)
   abline(v=Median0 ,lty=5.5,col="red")
   legend(1250, 0.4, c( paste("MRL0 =", Median0) , paste("ARL0 =", ARL0r)), cex=1, lty=c(5.5,5.5),lwd=c(1,1),col=c("red","blue"))
 }
