@@ -52,7 +52,7 @@ shinyServer(function(input, output) {
   
   tbq <- reactive({
     data.frame(
-      Percentile = c("5%", "25%", "50%", "75%", "95%"),
+      Quantile = c("0.05", "0.25", "0.50 (MRL0)", "0.75", "0.95"),
       Value = as.numeric(c(q5(), q25(), q50(), q75(), q95())),
       stringsAsFactors = FALSE
     )
