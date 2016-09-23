@@ -54,18 +54,10 @@ shinyServer(function(input, output) {
     qgeom(0.95, 2 - (2 * pnorm(L)))
   })
   
-  tbq <- reactive({
-    data.frame(
-      Quantile = c("Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
-      Value = as.numeric(c(q5(), q25(), q50(), q75(), q95())),
-      stringsAsFactors = FALSE
-    )
-  })
-  
   tb <- reactive({
     data.frame(
-      Metric = c("ARL0", "FAR"),
-      Value = as.numeric(c(arl0(), far0())),
+      Metric = c("ARL", "FAR", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
+      Value = as.numeric(c(arl0(), far0(), q5(), q25(), q50(), q75(), q95())),
       stringsAsFactors = FALSE
     )
   })
@@ -270,18 +262,10 @@ shinyServer(function(input, output) {
     return(g)
   })
   
-  tbq_1 <- reactive({
-    data.frame(
-      Quantile = c("Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
-      Value = as.numeric(c(q5_1(), q25_1(), q50_1(), q75_1(), q95_1())),
-      stringsAsFactors = FALSE
-    )
-  })
-  
   tb_1 <- reactive({
     data.frame(
-      Metric = c("ARL0", "FAR"),
-      Value = as.numeric(c(arl0(), far0())),
+      Metric = c("ARL", "FAR", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
+      Value = as.numeric(c(arl1(), far1(), q5_1(), q25_1(), q50_1(), q75_1(), q95_1())),
       stringsAsFactors = FALSE
     )
   })
