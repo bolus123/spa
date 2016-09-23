@@ -28,7 +28,7 @@ shinyUI(fluidPage(
       numericInput("t_0", "Target for In-Control Run Length:", 370),
       
       sliderInput("delta", "Scaled Shift:", 
-                  min = 0, max = 3, value = 0.05, step = 0.01),
+                  min = 0, max = 3, value = 0.5, step = 0.01),
       
       numericInput("t_d", "Target for Out-of-Control Run Length:", 3)
     ),
@@ -42,7 +42,14 @@ shinyUI(fluidPage(
                                          tableOutput("psum"), tableOutput("psum_1"))
                            )
                            ), 
-                  tabPanel("PDF-CDF", plotOutput("cdf"), plotOutput("pdf"))
+                  tabPanel("PDF-CDF", 
+                           fluidRow(
+                             column(6,
+                                plotOutput("cdf"), plotOutput("pdf")),
+                             column(6,
+                                plotOutput("cdfrl1"), plotOutput("pdfrl1"))
+                                    )
+                                    )
       )
     )
   )
