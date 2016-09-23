@@ -2,6 +2,10 @@ library(shiny)
 
 shinyServer(function(input, output) {
 
+########################################################
+# In Control Cases
+########################################################
+  
   arl0 <- reactive({
     L <- as.numeric(input$l)
     1/(2 - (2 * pnorm(L)))
@@ -60,8 +64,8 @@ shinyServer(function(input, output) {
   
   tb <- reactive({
     data.frame(
-      Metric = c("ARL0", "FAR", "CDFRL0", "PDFRL0"),
-      Value = as.numeric(c(arl0(), far0(), cdfrl0(), pdfrl0())),
+      Metric = c("ARL0", "FAR"),
+      Value = as.numeric(c(arl0(), far0())),
       stringsAsFactors = FALSE
     )
   })
@@ -74,7 +78,7 @@ shinyServer(function(input, output) {
     tbq()
   }, digits = 2)
 
-#######################################
+####################################################
   
   output$cdf <- renderPlot({
     L <- as.numeric(input$l)
@@ -131,7 +135,7 @@ shinyServer(function(input, output) {
     cdf
   })
   
-###################################
+####################################################################
   
   output$pdf <- renderPlot({
     L <- as.numeric(input$l)
@@ -178,5 +182,118 @@ shinyServer(function(input, output) {
     pdf
     
   })
+  
+####################################################################
+# Out of Control
+####################################################################
+  
+  arl1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    1/(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
+  })
+  
+  far1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    (1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
+  })
+  
+  cdfrl1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    t <- as.integer(arl1())
+    n <- as.numeric(input$obs)
+    b <- t-1
+    pgeom(b,1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
+  })
+  
+  pdfrl1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    t <- as.integer(arl0())
+    n <- as.numeric(input$obs)
+    b<-t-1
+    a<-dgeom(b,1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
+  })
+  
+  
+  q5_1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    p <- 0.05
+    a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
+    g<-ceiling(a)
+    return(g)
+  })
+  
+  q25_1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    p <- 0.25
+    a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
+    g<-ceiling(a)
+    return(g)
+  })
+  
+  q50_1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    p <- 0.50
+    a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
+    g<-ceiling(a)
+    return(g)
+  })
+  
+  q75_1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    p <- 0.75
+    a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
+    g<-ceiling(a)
+    return(g)
+  })
+  
+  q95_1 <- reactive({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    p <- 0.95
+    a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
+    g<-ceiling(a)
+    return(g)
+  })
+  
+  tbq_1 <- reactive({
+    data.frame(
+      Quantile = c("Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
+      Value = as.numeric(c(q5_1(), q25_1(), q50_1(), q75_1(), q95_1())),
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  tb_1 <- reactive({
+    data.frame(
+      Metric = c("ARL0", "FAR"),
+      Value = as.numeric(c(arl0(), far0())),
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  output$psum_1 <- renderTable({
+    tb_1()
+  }, digits = 5)
+  
+  output$qsum_1 <- renderTable({
+    tbq_1()
+  }, digits = 2)
+  
+
   
 })
