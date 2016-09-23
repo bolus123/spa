@@ -73,6 +73,8 @@ shinyServer(function(input, output) {
   output$qsum <- renderTable({
     tbq()
   }, digits = 2)
+
+#######################################
   
   output$cdf <- renderPlot({
     L <- as.numeric(input$l)
@@ -123,22 +125,58 @@ shinyServer(function(input, output) {
               axis(4,cdfmedianr,cex.axis=1,las=1)
               abline(v=median0 ,lty=5.5,col="red")
               abline(h=cdfrl0(quantileRL0(0.5,L),L),lty=5.5,col="red")
-              legend(1250, 0.4, c( paste("MRL0 =", median0) , 
+              legend(1250, 0.4, c( paste("MRL0 =", median0), 
                   paste("ARL0 =", arl0r)), cex=1, lty=c(5.5,5.5),lwd=c(1,1),
                   col=c("red","blue"))
     cdf
   })
   
+###################################
+  
   output$pdf <- renderPlot({
     L <- as.numeric(input$l)
-    pdfrlc <- function(t, L){
-      pdfrl0 <- dgeom(t, 2 - (2 * pnorm(L)))
-      Vectorize(pdfrl0)
+    
+    arl0 <- function (L) {
+      a <- 1/(2-(2*pnorm(L)))
+      return(a)
     }
-    pdf <- curve(pdfrlc(x, L), 1, 2000, n = 2000, xlab = "t", ylab = "",
-                 cex.axis = 1.5, type = "l", lty = 1, lwd = 3, yaxs = "i", 
-                 xaxs = "i",main = paste("PDF of the In-Control RL","for", "L =", L))
+    
+    pdfrl0 <- function (t,L) {
+      b<-t-1
+      a<-dgeom(b,2-(2*pnorm(L)))
+      return(a)
+    }
+    
+    pdf2 <- Vectorize(pdfrl0)
+    t <- seq(from = 1, to = 2000, by = 10)
+    pdfv <- vector(, length(t))
+    for (i in 1:length(t)) {
+      pdfv[i] <- pdfrl0(t[i],L)
+    }
+    
+    quantileRL0 <- function (p,L) {
+      a<-log(1-p)/log(1-(2-(2*pnorm(L))))
+      g<-ceiling(a)
+      return(g)
+    }
+    
+    arl0r <- round(arl0(L),2)
+    
+    median0 <- quantileRL0(0.5,L)
+    
+    pdf <- plot(t,pdfv,xlab="t",ylab="",cex.axis=1.5,type="h",lty=1,lwd=1,yaxs="i",xaxs="i",xaxt="n")
+           title(main=paste("P(IC RL = t)","for", "L=", L), line=+2.5)
+           xvalues<-c(0,200,400,600,800,1000,1200,1400,1600,1800,2000)
+           axis(1,at=xvalues,cex.axis=1.5,las=1)
+           axis(3,arl0r,cex.axis=1,las=1)
+           abline(v=arl0(L),lty=5.5,col="blue")
+           axis(1,median0,cex.axis=1,las=1,line=1)
+           abline(v=median0 ,lty=5.5,col="red")
+           legend(1250, 0.4, c( paste("MRL0 =", median0) , paste("ARL0 =", arl0r)),
+                  cex=1, lty=c(5.5,5.5),lwd=c(1,1),col=c("red","blue"))
+    
     pdf
+    
   })
   
 })
