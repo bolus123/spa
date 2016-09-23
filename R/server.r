@@ -59,7 +59,39 @@ shinyServer(function(input, output) {
     qgeom(0.95, 2 - (2 * pnorm(L)))
   })
   
-  
+  output$box_ic <- renderPlot({
+    L <- as.numeric(input$l)
+    q1 <- qgeom(0.05, 2 - (2 * pnorm(L)))
+    q2 <- qgeom(0.25, 2 - (2 * pnorm(L)))
+    q3 <- qgeom(0.50, 2 - (2 * pnorm(L)))
+    q4 <- qgeom(0.75, 2 - (2 * pnorm(L)))
+    q5 <- qgeom(0.95, 2 - (2 * pnorm(L)))
+    m <-  1/(2 - (2 * pnorm(L)))
+    
+    y <- seq(q1 - 1, q5 + 1, 1)
+    x <- seq(1, length(y), 1)
+    
+    box <- plot(x, y, type = "n", ylab = "", xlab = "", frame.plot = F, axes = F)
+        segments(length(x)/2 - q2, q5, length(x)/2 + q2, q5)
+        segments(length(x)/2 - q2, q1, length(x)/2 + q2, q1)
+        segments(length(x)/2 - q3, q4, length(x)/2 + q3, q4)
+        segments(length(x)/2 - q3, q2, length(x)/2 + q3, q2)
+        segments(length(x)/2 - q3, q3, length(x)/2 + q3, q3)
+        segments(length(x)/2 - q3, q2, length(x)/2 - q3, q4)
+        segments(length(x)/2 + q3, q2, length(x)/2 + q3, q4)
+        segments(length(x)/2, q4, length(x)/2, q5)
+        segments(length(x)/2, q1, length(x)/2, q2)
+        points(length(x)/2, m, type = "b", col = "red")
+        #text(length(x)/2 + q4, q5, labels = c(paste("Q95 =", q5)))
+        #text(length(x)/2 + q4, q4, labels = c(paste("Q75 =", q4)))
+        #text(length(x)/2 + q4, q3, labels = c(paste("Q50 =", q3)))
+        #text(length(x)/2 + q4, q2, labels = c(paste("Q25 =", q2)))
+        #text(length(x)/2 + q4, q1, labels = c(paste("Q5 =", q1)))
+        #text(length(x)/2 + q4, m, labels = c(paste("Mean =", m)))
+    
+    box
+    
+  })
   
   tb <- reactive({
     data.frame(
@@ -269,6 +301,42 @@ shinyServer(function(input, output) {
     a<-log(1-p)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L))))
     g<-ceiling(a)
     return(g)
+  })
+  
+  output$box_oc <- renderPlot({
+    L <- as.numeric(input$l)
+    delta <- as.numeric(input$delta)
+    n <- as.numeric(input$obs)
+    q1 <- ceiling(log(1-0.05)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))))
+    q2 <- ceiling(log(1-0.25)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))))
+    q3 <- ceiling(log(1-0.50)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))))
+    q4 <- ceiling(log(1-0.75)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))))
+    q5 <- ceiling(log(1-0.95)/log(1-(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))))
+    m <- 1/(1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
+    
+    y <- seq(q1 - 1, q5 + 1, 1)
+    x <- seq(1, length(y), 1)
+    
+    box <- plot(x, y, type = "n", ylab = "", xlab = "", frame.plot = F, axes = F)
+    segments(length(x)/2 - q2, q5, length(x)/2 + q2, q5)
+    segments(length(x)/2 - q2, q1, length(x)/2 + q2, q1)
+    segments(length(x)/2 - q3, q4, length(x)/2 + q3, q4)
+    segments(length(x)/2 - q3, q2, length(x)/2 + q3, q2)
+    segments(length(x)/2 - q3, q3, length(x)/2 + q3, q3)
+    segments(length(x)/2 - q3, q2, length(x)/2 - q3, q4)
+    segments(length(x)/2 + q3, q2, length(x)/2 + q3, q4)
+    segments(length(x)/2, q4, length(x)/2, q5)
+    segments(length(x)/2, q1, length(x)/2, q2)
+    points(length(x)/2, m, type = "b", col = "red")
+    #text(length(x)/2 + q4, q5, labels = c(paste("Q95 =", q5)))
+    #text(length(x)/2 + q4, q4, labels = c(paste("Q75 =", q4)))
+    #text(length(x)/2 + q4, q3, labels = c(paste("Q50 =", q3)))
+    #text(length(x)/2 + q4, q2, labels = c(paste("Q25 =", q2)))
+    #text(length(x)/2 + q4, q1, labels = c(paste("Q5 =", q1)))
+    #text(length(x)/2 + q4, m, labels = c(paste("Mean =", m)))
+    
+    box
+    
   })
   
   tb_1 <- reactive({
