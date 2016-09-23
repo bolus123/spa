@@ -1,8 +1,8 @@
 name: spa_v1
 account: curryhilton
 server: shinyapps.io
-bundleId: 552993
+bundleId: 566607
 url: https://curryhilton.shinyapps.io/spa_v1/
-when: 1473422396.23626
+when: 1474659254.72103
 asMultiple: FALSE
 asStatic: FALSE
