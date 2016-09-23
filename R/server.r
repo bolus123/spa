@@ -16,6 +16,11 @@ shinyServer(function(input, output) {
     2 - (2 * pnorm(L))
   })
   
+  arl_t <- reactive({
+    target <- as.numeric(input$t_0)
+    pnorm((2*target - 1)/(2*target))
+  })
+  
   cdfrl0 <- reactive({
     L <- as.numeric(input$l)
     t <- as.integer(arl0())
@@ -54,10 +59,12 @@ shinyServer(function(input, output) {
     qgeom(0.95, 2 - (2 * pnorm(L)))
   })
   
+  
+  
   tb <- reactive({
     data.frame(
-      Metric = c("ARL", "FAR", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
-      Value = as.numeric(c(arl0(), far0(), q5(), q25(), q50(), q75(), q95())),
+      Metric = c("ARL", "FAR", "P(ARL < Target ARL)", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
+      Value = as.numeric(c(arl0(), far0(), arl_t(), q5(), q25(), q50(), q75(), q95())),
       stringsAsFactors = FALSE
     )
   })
@@ -190,6 +197,11 @@ shinyServer(function(input, output) {
     (1-(pnorm((-delta*sqrt(n))+L)-pnorm((-delta*sqrt(n))-L)))
   })
   
+  arl_td <- reactive({
+    target <- as.numeric(input$t_d)
+    pnorm((2*target - 1)/(2*target))
+  })
+  
   cdfrl1 <- reactive({
     L <- as.numeric(input$l)
     delta <- as.numeric(input$delta)
@@ -261,8 +273,8 @@ shinyServer(function(input, output) {
   
   tb_1 <- reactive({
     data.frame(
-      Metric = c("ARL", "FAR", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
-      Value = as.numeric(c(arl1(), far1(), q5_1(), q25_1(), q50_1(), q75_1(), q95_1())),
+      Metric = c("ARL", "FAR", "P(ARL < Target ARL)", "Q-0.05", "Q-0.25", "Q-0.50 (MRL0)", "Q-0.75", "Q-0.95"),
+      Value = as.numeric(c(arl1(), far1(), arl_td(), q5_1(), q25_1(), q50_1(), q75_1(), q95_1())),
       stringsAsFactors = FALSE
     )
   })

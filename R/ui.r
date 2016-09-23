@@ -38,10 +38,13 @@ shinyUI(fluidPage(
       tabsetPanel(type = "tabs", 
                   tabPanel("Performance", 
                            fluidRow(
-                             splitLayout(cellWidths = c("50%", "50%"),
-                                         tableOutput("psum"), tableOutput("psum_1"))
+                             column(4,
+                                    tableOutput("psum")),
+                             column(4,
+                                    tableOutput("psum_1"))
                            )
-                           ), 
+                  ),
+
                   tabPanel("PDF-CDF", 
                            fluidRow(
                              column(6,

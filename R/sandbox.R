@@ -1,27 +1,5 @@
-cc <- reactive({
-  input$cc
-})
-
-case <- reactive({
-  input$case
-})
-
-est <- reactive({
-  input$est
-})
-
-sub <- reactive({
-  input$sub
-})
-
-n <- reactive({
-  input$obs
-})
-
-L <- reactive({
-  as.numeric(input$l)
-})
-
-d <- reactive({
-  input$delta
-})
+q1 <- 1
+q2 <- 2
+q3 <- 3
+q4 <- 4
+q5 <- 5
