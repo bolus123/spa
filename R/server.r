@@ -6,6 +6,8 @@ shinyServer(function(input, output) {
 # In Control Cases
 ########################################################
   
+  # Kiran and Brandon are the fucking mans
+  
   arl0 <- reactive({
     L <- as.numeric(input$l)
     1/(2 - (2 * pnorm(L)))
