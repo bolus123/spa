@@ -29,23 +29,31 @@ ARL0 <- function (m,n,L) {
   
 }
 
+ARL0(10,3,3)
+
 CDFRL0 <- function (a,m,n,L) {
   t <- floor(a)
   inside <- function (U) {
-    a <- 1-((2*pnorm(1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1)-1)^(t-1))
+    a <- 1-((1-2*pnorm(-1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1))^(t))
     return(a)
   }
   b <- integrate(inside,0,1)$va
   return (b)
 }
 
+PDFRL0 <- function (a,m,n,L) {
+  b <- CDFRL0(a,m,n,L)-CDFRL0(a-1,m,n,L)
+  return (b)
+}
+
 quantileRL0 <-function (p,m,n,L) {
   CDFRL0 <- function (a,m,n,L) {
+    t <- a
     inside <- function (U) {
-      a <- 1-((2*pnorm(1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1)-1)^(a-1))
+      a <- ((1-2*pnorm(-1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1))^(t))
       return(a)
     }
-    b <- integrate(inside,0,1)$va
+    b <- 1 - integrate(inside,0,1)$va
     return (b)
   }
   CDFm <- function (a) {
@@ -82,28 +90,10 @@ plotCDFRL0 <- function (m,n,L) {
 }
 
 plotPDFRL0 <- function (m,n,L) {
-  CDFRL0 <- function (a,m,n,L) {
-    inside <- function (U) {
-      a <- 1-((2*pnorm(1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1)-1)^(a-1))
-      return(a)
-    }
-    b <- integrate(inside,0,1)$va
-    return (b)
-  }
-  
-  CDF <- function (h) {
-    g <- CDFRL0(h,m,n,L)
-    return(g)
-  }
-  PDF <- function (x) {
-    f <- grad(CDF, x)
-    return(f)
-  }
-  PDF2 <- Vectorize(PDF)
   t <- seq(from = 1, to = 2000, by = 10)
   PDFv <- vector(,length(t))
   for (i in 1:length(t)) {
-    PDFv[i] <- PDF2(t[i])
+    PDFv[i] <- PDFRL0(t[i],m,n,L)
   }
   
   plot(t,PDFv,xlab="t",ylab="",cex.axis=1.5,type="h",lty=1,lwd=1,yaxs="i",xaxs="i",xaxt="n")
@@ -119,6 +109,8 @@ plotPDFRL0 <- function (m,n,L) {
   axis(1,Median0,cex.axis=1,las=1,line=1)
   abline(v=Median0 ,lty=5.5,col="red")
 }
+
+plotPDFRL0(10,3,3)
 
 CDFCARL0 <- function (t,m,n,L) {
   v <- m*(n-1)

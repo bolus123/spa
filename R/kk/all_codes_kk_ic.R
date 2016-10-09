@@ -46,6 +46,9 @@ plotCDFRL0 <- function (L) {
   legend(1250, 0.4, c( paste("MRL0 =", Median0) , paste("ARL0 =", ARL0r)), cex=1, lty=c(5.5,5.5),lwd=c(1,1),col=c("red","blue"))
 }
 
+dev.new()
+plotCDFRL0(3)
+
 plotPDFRL0 <- function (L) {
   PDF2 <- Vectorize(PDFRL0)
   t <- seq(from = 1, to = 2000, by = 10)
@@ -67,3 +70,6 @@ plotPDFRL0 <- function (L) {
   abline(v=Median0 ,lty=5.5,col="red")
   legend(1250, 0.4, c( paste("MRL0 =", Median0) , paste("ARL0 =", ARL0r)), cex=1, lty=c(5.5,5.5),lwd=c(1,1),col=c("red","blue"))
 }
+
+dev.new()
+plotPDFRL0(3)

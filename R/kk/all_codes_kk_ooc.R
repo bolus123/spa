@@ -21,6 +21,7 @@ quantileRL1 <-function (p,L,delta,n) {
   return(g)
 }
 
+
 plotCDFRL1 <- function (L,delta,n) {
   CDFRL12 <- Vectorize(CDFRL1)
   curve(CDFRL12(x,L,delta,n),0,100 ,n=1000,ylim=c(0,1),xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n",yaxt="n")
