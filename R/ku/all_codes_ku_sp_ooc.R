@@ -30,6 +30,18 @@ ARL1 <- function (delta,m,n,L) {
   
 }
 
+PS <- function (delta,m,n,L) {
+  
+  CARL <- function (U) {
+    a <- (1-pnorm((-delta*sqrt(n))+(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1)+pnorm((-delta*sqrt(n))-(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1))
+    return(a)
+  }
+  a <- integrate(CARL,0,1)$va
+  return(a)
+  
+}
+
+PS(0.5,30,5,3)
 ARL1(0.5,30,5,3)
 
 CDFRL1 <- function (a,delta,m,n,L) {
@@ -128,18 +140,6 @@ CDFCARL1 <- function (t,delta,m,n,L) {
 }
 
 CDFCARL1(100,0.5,25,5,3)
-
-CDF <- function (h) {
-  g <- CDFCARL1(h,0.5,25,5,3)
-  return(g)
-}
-CDF2 <- Vectorize(CDF )
-PDF <- function (x) {
-  f <- grad(CDF2, x)
-  return(f)
-}
-
-PDF(1.01)
 
 quantileCARL1 <- function (x,delta,m,n,L) {
   g <- 1/(1-pchisq((((L^2)*qchisq(x,m*(n-1)))/(m*(n-1))), df=1, ncp = (delta^2)*n))

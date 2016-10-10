@@ -1,9 +1,6 @@
-#install.packages("cubature")
-#install.packages("numDeriv")
-library(cubature)
 library(numDeriv)
 
-secantc <- function(fun, x0, x1, tol=1e-7, niter=100000){
+secantc <- function(fun, x0, x1, tol=1e-10, niter=100000){
   for ( i in 1:niter ) {
     funx1 <- fun(x1)
     funx0 <- fun(x0)
@@ -22,53 +19,54 @@ secantc <- function(fun, x0, x1, tol=1e-7, niter=100000){
 
 ARL1 <- function (delta,m,n,L) {
   CARL <- function (U) {
-    a <- 1/(1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))+(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))+qnorm(U[1],0,1))-(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1))
+    a <- 1/(1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))+L,0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))-L,0,1))
     return(a)
   }
-  a <- adaptIntegrate(CARL, lowerLimit = c(0, 0), upperLimit = c(1, 1))$integral
-  return (a)
+  a <- integrate(CARL,0,1)$va
+  return(a)
 }
 
 PS <- function (delta,m,n,L) {
   CARL <- function (U) {
-    a <- (1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))+(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))+qnorm(U[1],0,1))-(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1))
+    a <- (1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))+L,0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))-L,0,1))
     return(a)
   }
-  a <- adaptIntegrate(CARL, lowerLimit = c(0, 0), upperLimit = c(1, 1))$integral
-  return (a)
+  a <- integrate(CARL,0,1)$va
+  return(a)
 }
 
 PS(0.5,25,5,3)
+
 ARL1(0.5,25,5,3)
 
 CDFRL1 <- function (a,delta,m,n,L) {
   t <- floor(a)
   inside <- function (U) {
-    a <- 1 - (((pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))+(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1) - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))-(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1))^(t)))
+    a <- 1 - (((pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))+L,0,1) - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))-L,0,1))^(t)))
     return(a)
   }
-  b <- adaptIntegrate(inside, lowerLimit = c(0, 0), upperLimit = c(1, 1))$integral
+  b <- integrate(inside,0,1)$va
   return (b)
 }
 
-CDFRL1(0.5,2,20,5,3)
+CDFRL1(37,0.5,25,5,3)
 
 PDFRL1 <- function (a,delta,m,n,L) {
   b <- CDFRL1(a,delta,m,n,L)-CDFRL1(a-1,delta,m,n,L)
   return (b)
 }
 
-
 quantileRL1 <-function (p,delta,m,n,L) {
   CDFRL1 <- function (a,delta,m,n,L) {
     t <- a
     inside <- function (U) {
-      a <- 1 - (((pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))+(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1) - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U[1],0,1))-(L*sqrt(qchisq(U[2],m*(n-1))/(m*(n-1)))),0,1))^(t)))
+      a <- 1 - (((pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))+L,0,1) - pnorm((-delta*sqrt(n))+((1/sqrt(m))*qnorm(U,0,1))-L,0,1))^(t)))
       return(a)
     }
-    b <- adaptIntegrate(inside, lowerLimit = c(0, 0), upperLimit = c(1, 1))$integral
+    b <- integrate(inside,0,1)$va
     return (b)
   }
+  
   CDFm <- function (a) {
     a <- CDFRL1(a,delta,m,n,L) - p
     return(a)
@@ -77,11 +75,9 @@ quantileRL1 <-function (p,delta,m,n,L) {
   return(g)
 }
 
-quantileRL1(0.5,0.5,25,5,3)
-
 plotCDFRL1 <- function (delta,m,n,L) {
   CDFRL12 <- Vectorize(CDFRL1)
-  curve(CDFRL12(x,delta,m,n,L),0,100 ,n=300,ylim=c(0,1),xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n",yaxt="n")
+  curve(CDFRL12(x,delta,m,n,L),0,100 ,n=1000,ylim=c(0,1),xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n",yaxt="n")
   title(main=paste("P(OOC RL <= t)","for", "L=",L,"m=",m, "n=",n,"delta=", delta), line=+2.5)
   xvalues<-c(0,20,40,60,80,100)
   yvalues<-c(0,0.2,0.4,0.6,0.8,1)
@@ -136,13 +132,32 @@ plotPDFRL1 <- function (delta,m,n,L) {
 dev.new()
 plotPDFRL1(0.5,25,5,3)
 
-CDFCARL1 <- function (t,delta,m,n,L) {
-  CARL1 <- function (U) {
-    a<-pchisq((m*(n-1)*qchisq(1-(1/t), df=1, ncp = ((qnorm(U)/sqrt(m))-(delta*sqrt(n)))^2))/(L^2),m*(n-1))
+CARL1 <- function (Z,delta,m,n,L) {
+  a <- 1/(1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*Z)+L,0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))*Z)-L,0,1))
+  return(a)
+}
+
+CDFCARL0 <- function (x,delta,m,n,L) {
+  l <- 1/(1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*0)+L,0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))*0)-L,0,1))
+  CARL <- function (Z) {
+    a <- 1/(1 - pnorm((-delta*sqrt(n))+((1/sqrt(m))*Z)+L,0,1) + pnorm((-delta*sqrt(n))+((1/sqrt(m))*Z)-L,0,1))
     return(a)
   }
-  d <- integrate(CARL1,0,1)$val
-  return(d)
+  ARL0 <- function (t) {
+    k <- CARL(t)-x
+    return(k)
+  }
+  if (x>l) {
+    c <- 1
+  }
+  if ((x<=l) & (x>=1) ) {
+    b <- secantc(ARL0,-100000000,0)
+    c <- 2*pnorm(-1*abs(b),0,1)
+  }
+  if (x<1) {
+    c <- 0
+  }
+  return(c)
 }
 
 quantileCARL1 <-function (p,delta,m,n,L) {
@@ -194,7 +209,7 @@ plotPDFCARL1 <- function (delta,m,n,L) {
     return(f)
   }
   PDF2 <- Vectorize(PDF)
-  curve(PDF2,1.01,100,n=100,xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n")
+  curve(PDF2,2,100,n=100,xlab="t",ylab="",cex.axis=1.5,type="l",lty=1,lwd=3,yaxs="i",xaxs="i",xaxt="n")
   title(main=paste("pdf of the OOC CARL","for", "L=",L, "m=",m, "n=",n,"delta=", delta   ), line=+2.5)
   xvalues<-c(0,20,40,60,80,100)
   axis(1,at=xvalues,cex.axis=1.5,las=1)
@@ -209,4 +224,4 @@ plotPDFCARL1 <- function (delta,m,n,L) {
 }
 
 dev.new()
-plotPDFCARL1(0.5,25,5,3)
+plotPDFCARL1(0.5,25,2,3)

@@ -29,6 +29,18 @@ ARL0 <- function (m,n,L) {
   
 }
 
+FAR <- function (m,n,L) {
+  
+  CARL <- function (U) {
+    a <- (2*pnorm(-1*(L*sqrt(qchisq(U,m*(n-1))/(m*(n-1)))),0,1))
+    return(a)
+  }
+  a <- integrate(CARL,0,1)$va
+  return(a)
+  
+}
+
+FAR(10,3,3)
 ARL0(10,3,3)
 
 CDFRL0 <- function (a,m,n,L) {
