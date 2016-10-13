@@ -217,4 +217,3 @@ plotPDFCARL0 <- function (m,n,L) {
   abline(v=quantileCARL0(0.5,m,n,L) ,lty=5.5,col="red")
 }
 
-
