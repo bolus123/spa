@@ -36,7 +36,7 @@ shinyUI(fluidPage(
 
     mainPanel(
       tabsetPanel(type = "tabs", 
-                  tabPanel("Performance", 
+                  tabPanel("Test", 
                            fluidRow(
                              column(5,
                                     tableOutput("psum"), plotOutput("box_ic")),
